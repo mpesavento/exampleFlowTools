@@ -30,3 +30,19 @@
 *.exe
 *.out
 *.app
+
+
+# Visual Studio
+.vs/
+.vscode
+ofxTimeMeasurements.settings
+
+
+# XCode
+*.swp
+*~.nib
+build/
+*.pbxuser
+*.perspective
+*.perspectivev3
+xcuserdata
