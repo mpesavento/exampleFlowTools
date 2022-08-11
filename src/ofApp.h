@@ -26,8 +26,10 @@ public:
 //	ftTemperatureBridgeFlow temperatureBridgeFlow;
 	ftCombinedBridgeFlow 	combinedBridgeFlow;
 	ftFluidFlow				fluidFlow;
-	
-	ofImage					flowToolsLogo;
+  
+    ofFbo                   sourceVelocityFbo;
+    
+//	ofImage					flowToolsLogo;
 	
 	ofParameter<int>		outputWidth;
 	ofParameter<int>		outputHeight;

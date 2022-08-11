@@ -26,9 +26,18 @@ void ofApp::setup(){
 	flows.push_back(&combinedBridgeFlow);
 	flows.push_back(&fluidFlow);
 	
-	flowToolsLogo.load("flowtools.png");
-	fluidFlow.addObstacle(flowToolsLogo.getTexture());
-	
+//	flowToolsLogo.load("flowtools.png");
+//    fluidFlow.addObstacle(flowToolsLogo.getTexture());
+    
+    sourceVelocityFbo.allocate(densityWidth, densityHeight);
+    sourceVelocityFbo.begin();
+        ofSetColor(255, 255, 255);
+        ofDrawRectangle(200, densityHeight-200, 600, 50);
+    sourceVelocityFbo.end();
+
+	fluidFlow.addObstacle(sourceVelocityFbo.getTexture());
+    
+    
 	simpleCam.setup(densityWidth, densityHeight, true);
 	cameraFbo.allocate(densityWidth, densityHeight);
 	ftUtil::zero(cameraFbo);
@@ -107,14 +116,17 @@ void ofApp::update(){
 		cameraFbo.begin();
 		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());  // draw flipped
 		cameraFbo.end();
-		
+
 		opticalFlow.setInput(cameraFbo.getTexture());
 	}
-	
+
 	opticalFlow.update();
-	
+    
+    ofTexture tex = opticalFlow.getVelocity();
 	combinedBridgeFlow.setVelocity(opticalFlow.getVelocity());
 	combinedBridgeFlow.setDensity(cameraFbo.getTexture());
+//    combinedBridgeFlow.setVelocity(sourceVelocityFbo.getTexture());
+//    combinedBridgeFlow.setDensity(sourceVelocityFbo.getTexture());
 	combinedBridgeFlow.update(dt);
 	
 //	velocityBridgeFlow.setVelocity(opticalFlow.getVelocity());
@@ -125,6 +137,8 @@ void ofApp::update(){
 //	temperatureBridgeFlow.setDensity(cameraFbo.getTexture());
 //	temperatureBridgeFlow.setVelocity(opticalFlow.getVelocity());
 //	temperatureBridgeFlow.update(dt);
+    
+    fluidFlow.addVelocity(sourceVelocityFbo.getTexture());
 	
 	fluidFlow.addVelocity(combinedBridgeFlow.getVelocity());
 	fluidFlow.addDensity(combinedBridgeFlow.getDensity());
@@ -225,7 +239,7 @@ void ofApp::keyPressed(int key){
 void ofApp::toggleResetListener(bool& _value) {
 	if (_value) {
 		for (auto flow : flows) { flow->reset(); }
-		fluidFlow.addObstacle(flowToolsLogo.getTexture());
+//		fluidFlow.addObstacle(flowToolsLogo.getTexture());
 	}
 	_value = false;
 }
@@ -240,6 +254,6 @@ void ofApp::simulationResolutionListener(int &_value){
 	combinedBridgeFlow.resize(simulationWidth, simulationHeight, densityWidth, densityHeight);
 	
 	fluidFlow.resize(simulationWidth, simulationHeight, densityWidth, densityHeight);
-	fluidFlow.addObstacle(flowToolsLogo.getTexture());
+//	fluidFlow.addObstacle(flowToolsLogo.getTexture());
 }
 
